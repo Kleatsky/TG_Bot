@@ -34,7 +34,7 @@ namespace ServerConsole
                     return;
                 }
             }
-            else
+            else//Если нет токена
             {
                 return;
             }
@@ -42,10 +42,9 @@ namespace ServerConsole
             var cts = new CancellationTokenSource();
             var bot = new TelegramBotClient(_token);
 
-
             var receiverOptions = new ReceiverOptions
             {
-                AllowedUpdates = Array.Empty<UpdateType>()
+                AllowedUpdates = Array.Empty<UpdateType>()//любой тип данных на получение
             };
 
             UpdateHandler updateHandler = new UpdateHandler();
