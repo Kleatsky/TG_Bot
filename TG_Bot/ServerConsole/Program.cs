@@ -6,7 +6,7 @@ namespace ServerConsole
 {
     internal class Program
     {
-        private static string _filePath = @"Token.txt";
+        private static string _filePath = @"Token.txt";//файл с токеном
         private static string _token;
 
         private static void OnHandleUpdateStarted(object sender, string message)
@@ -41,9 +41,7 @@ namespace ServerConsole
 
             var cts = new CancellationTokenSource();
             var bot = new TelegramBotClient(_token);
-            var me = await bot.GetMe();
-            Console.WriteLine($"Name: {me.FirstName} {me.LastName} | {me.Username} id: {me.Id} " +
-                $"Premial: {me.IsPremium} LanguageCode: {me.LanguageCode}");
+
 
             var receiverOptions = new ReceiverOptions
             {
@@ -61,20 +59,33 @@ namespace ServerConsole
                 cancellationToken: cts.Token
             );
 
-
-
-
-            Console.ReadLine();
-            await cts.CancelAsync();
-
-            try
+            //Цикл ожидания завершения программы
+            while (true)
             {
-                updateHandler.OnHandleUpdateStarted -= OnHandleUpdateStarted;//Отписка от события
-                updateHandler.OnHandleUpdateCompleted -= OnHandleUpdateCompleted;//Отписка от события
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Error while unsubscribe: " + e.Message);
+                Console.WriteLine("Press 'A' button to close program.");
+                var key = Console.ReadKey();
+                if (key.Key == ConsoleKey.A)
+                {
+                    await cts.CancelAsync();
+
+                    try
+                    {
+                        updateHandler.OnHandleUpdateStarted -= OnHandleUpdateStarted;//Отписка от события
+                        updateHandler.OnHandleUpdateCompleted -= OnHandleUpdateCompleted;//Отписка от события
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Error while unsubscribe: " + e.Message);
+                    }
+                    Console.WriteLine("Closing program.");
+                    return;
+                }
+                else
+                {
+                    var me = await bot.GetMe();
+                    Console.WriteLine($"Name: {me.FirstName} {me.LastName} | {me.Username} id: {me.Id} " +
+                        $"Premial: {me.IsPremium} LanguageCode: {me.LanguageCode}");
+                }
             }
         }
     }

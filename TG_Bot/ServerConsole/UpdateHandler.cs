@@ -19,7 +19,6 @@ namespace ServerConsole
         public event MessageHandler OnHandleUpdateCompleted;
         public async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, CancellationToken cancellationToken)
         {
-
             if (update.Type == UpdateType.Message && update.Message != null)
             {
 
@@ -28,11 +27,23 @@ namespace ServerConsole
 
                 OnHandleUpdateStarted.Invoke(this, messageText);
 
-                await bot.SendMessage(
-                    chatId: chatId,
-                    text: "Сообщение успешно принято",
-                    cancellationToken: cancellationToken
-                );
+                if (messageText == "/cat")
+                {
+                    string catFact = await CatFacts.GetFactAsync();
+                    await bot.SendMessage(
+                        chatId: chatId,
+                        text: catFact,
+                        cancellationToken: cancellationToken
+                    );
+                }
+                else
+                {
+                    await bot.SendMessage(
+                        chatId: chatId,
+                        text: "Сообщение успешно принято",
+                        cancellationToken: cancellationToken
+                    );
+                }
 
                 OnHandleUpdateCompleted.Invoke(this, messageText);
             }
